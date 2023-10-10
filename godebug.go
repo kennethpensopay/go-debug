@@ -2,6 +2,7 @@ package godebug
 
 import (
 	"fmt"
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strconv"
@@ -24,7 +25,8 @@ const (
 )
 
 func init() {
-	log.Println("Initializing dbmdebug ...")
+	_ = godotenv.Load()
+
 	if d, err := strconv.ParseBool(strings.TrimSpace(os.Getenv("DEBUG"))); err == nil {
 		debugEnabled = d
 	}
