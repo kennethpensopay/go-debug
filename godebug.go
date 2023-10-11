@@ -9,7 +9,10 @@ import (
 	"strings"
 )
 
-var debugEnabled = false
+var (
+	debugEnabled = false
+	envPaths     = []string{".env"}
+)
 
 const (
 	// Bold Set font weight to Bold
@@ -25,12 +28,15 @@ const (
 )
 
 func init() {
-	_ = godotenv.Load()
+	loadEnvironmentVars()
+}
 
-	if d, err := strconv.ParseBool(strings.TrimSpace(os.Getenv("DEBUG"))); err == nil {
-		debugEnabled = d
-	}
-	Debug("Debug is enabled.")
+func EnableDebug() {
+	debugEnabled = true
+}
+
+func DisableDebug() {
+	debugEnabled = false
 }
 
 func Debugf(format string, a ...any) {
@@ -41,4 +47,18 @@ func Debug(message string) {
 	if debugEnabled {
 		log.Printf("%s%s[DEBUG]:%s %s%s\n", Bold, foregroundYellow, foregroundRed, message, ClearFont)
 	}
+}
+
+func SetNewEnvFilePaths(paths ...string) {
+	envPaths = paths
+	loadEnvironmentVars()
+}
+
+func loadEnvironmentVars() {
+	_ = godotenv.Load(envPaths...)
+
+	if d, err := strconv.ParseBool(strings.TrimSpace(os.Getenv("DEBUG"))); err == nil {
+		debugEnabled = d
+	}
+	Debug("Debug is enabled.")
 }
